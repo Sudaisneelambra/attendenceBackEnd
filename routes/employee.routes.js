@@ -3,8 +3,8 @@ const router = express.Router()
 
 const tockenCheck = require('../middleware/tockencheck')
 
-const admin = require('../controllers/admin.controller')
+const employee = require('../controllers/employee.controller')
 
-router.post('/addEmplyee' , tockenCheck, admin.addEmployee)
+router.post('/checkIn' , tockenCheck, employee.checkIn)
 
 module.exports=router

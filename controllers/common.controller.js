@@ -14,6 +14,7 @@ const commonLogin = async ( req, res ) => {
 
                 const token = jwt.sign(
                     {
+                      employeeId: mailExist._id,  
                       name: mailExist.username,
                       email: mailExist.email,
                       phonenumber: mailExist.phoneNumber,

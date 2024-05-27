@@ -44,7 +44,7 @@ const sendEmail = async (email, subjectSend,username, userpass) => {
     <p>Welcome aboard!</p>
 
     <p><span style="color: #336699; font-style: italic;">Best regards,</span></p>
-    <p><span style="color: #336699; font-weight: bold;">The Lekater Team</span></p>`,
+    <p><span style="color: #336699; font-weight: bold;">The Image Team</span></p>`,
     });
   } catch (error) {
     throw error

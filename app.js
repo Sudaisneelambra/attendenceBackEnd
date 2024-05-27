@@ -7,8 +7,11 @@ const cors = require('cors')
 const app = express();
 const port = process.env.PORT;
 const DB_URL = process.env.DB_URL;
+
 const commonRoutes = require('./routes/common.routes')
 const adminRoutes = require('./routes/admin.routes')
+const employeeRoutes = require('./routes/employee.routes')
+
 
 app.use(cors())
 app.use(express.json());
@@ -28,4 +31,6 @@ mongoose
 
   app.use('/', commonRoutes)
   app.use('/admin', adminRoutes)
+  app.use('/employee', employeeRoutes)
+
 
