@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const checkTocken=(req, res, next)=>{
-  console.log('anuz');
-  const secretKey= process.env.JWT_SECRETKEY;
+  const secretKey= process.env.JWT_SECRET_KEY;
   const authorizationHeader = req.headers['authorization'];
   const token = authorizationHeader.replace('Bearer ', '');
   jwt.verify(token, secretKey, (err, decoded) => {

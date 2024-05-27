@@ -1,17 +1,29 @@
 const mongoose = require('mongoose')
 
+const breakSchema = new mongoose.Schema({
+    breakStart: {
+        type: String,
+        required: true
+    },
+    breakEnd: {
+        type: String,
+    },
+    duration: {
+        type: String,
+    }
+});
+
 const attendanceSchema = mongoose.Schema({
     date:{
         type: String,
         required:true
     },
-    userId:{
+    employeeId:{
         type:mongoose.Types.ObjectId,
         required:true
     },
     checkIn:{
-        type:String,
-        required:true        
+        type:String,       
     },
     checkOut:{
         type:String,
@@ -25,22 +37,10 @@ const attendanceSchema = mongoose.Schema({
         required: true,
         enum: ['present', 'late', 'leave'],
     },
+    workingHours: {
+        type:String,
+    },
     break:[breakSchema]
 })
-
-const breakSchema = new mongoose.Schema({
-    breakStart: {
-        type: String,
-        required: true
-    },
-    breakEnd: {
-        type: String,
-        required: true
-    },
-    duration: {
-        type: String,
-        required: true
-    }
-});
 
 module.exports = mongoose.model('attendence',attendanceSchema)

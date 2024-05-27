@@ -27,12 +27,19 @@ const commonLogin = async ( req, res ) => {
                 if ( userType === 'user') {
                     
                     if (!mailExist.blockStatus) {
-                        res.json({
-                        success: true,
-                        token: token,
-                        data:mailExist,
-                        message: "User login successfull",
-                        });
+                        if(!mailExist?.isAdmin) {
+                            res.json({
+                            success: true,
+                            token: token,
+                            data:mailExist,
+                            message: "User login successfull",
+                            });
+                        }else {
+                            res.json({
+                                success: false,
+                                message: "You are not user",
+                            });
+                        }
                     } else {
                         res.json({
                         success: false,
