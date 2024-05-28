@@ -12,5 +12,6 @@ router.post('/takeBreak' ,tockenCheck, employee.takeBreak)
 router.get('/breakCheck' ,tockenCheck, employee.breakCheck)
 router.post('/breakEnd' ,tockenCheck, employee.breakEnd)
 router.post('/leaveRequest' ,tockenCheck, employee.leaveRequest)
+router.get('/getAttendance' ,tockenCheck, employee.getAttendance)
 
 module.exports=router

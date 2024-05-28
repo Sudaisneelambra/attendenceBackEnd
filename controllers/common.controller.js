@@ -1,8 +1,10 @@
 const users = require('../models/login')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose')
 
 const sercretKey = process.env.JWT_SECRET_KEY
+const attendence = require('../models/attendance')
 
 const commonLogin = async ( req, res ) => {
     try {
@@ -21,7 +23,7 @@ const commonLogin = async ( req, res ) => {
                       type: mailExist.isAdmin,
                     },
                     sercretKey,
-                    { expiresIn: "1h" }
+                    { expiresIn: "4h" }
                   );
 
                 if ( userType === 'user') {
@@ -88,4 +90,51 @@ const commonLogin = async ( req, res ) => {
     }
 } 
 
-module.exports = { commonLogin }
+const getAttendence = async (req, res) =>{
+    const {employeeId} =req.tokens
+    try {
+        // Aggregate query to get attendance details
+        const details = await attendence.aggregate([
+          {
+            $match: {
+                employeeId: new mongoose.Types.ObjectId(employeeId),
+            },
+          },
+          {
+            $project: {
+                _id: 0,
+                date: {
+                    $dateToString: {
+                        format: '%Y-%m-%d',
+                        date: { $toDate: '$date' },
+                    },
+                },
+                status: 1,
+                color: {
+                    $switch: {
+                      branches: [
+                        {case: {$eq: ['$status', 'leave']}, then: 'red'},
+                        {case: {$eq: ['$status', 'present']}, then: 'green'},
+                        {case: {$eq: ['$status', 'late']}, then: 'yellow'},
+                      ],
+                      default: 'black',
+                    },
+                },
+            },
+        },
+        ]);
+        res.status(200).json({
+          success: true,
+          data: details,
+        });
+      } catch (err) {
+        console.error(err);
+        // Internal server error
+        res.status(500).json({
+          success: false,
+          error: 'Internal Server Error',
+        });
+      }
+}
+
+module.exports = { commonLogin ,getAttendence }

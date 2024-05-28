@@ -1,5 +1,8 @@
 const emplyees = require('../models/login')
 const users =require('../models/login')
+const leave = require ('../models/leave')
+const attendence = require('../models/attendance')
+
 const emails = require("../utils/emails");
 const bcrypt = require('bcrypt')
 
@@ -52,7 +55,7 @@ const addEmployee = async ( req, res ) => {
     }
 } 
 
-const showUser = async (req, res) => {
+const showEmployee = async (req, res) => {
     try {
       const userList = await users.find();
       if (userList.length === 0) {
@@ -85,4 +88,45 @@ const showUser = async (req, res) => {
     }
   };
 
-module.exports = { addEmployee , showUser , blockAndUnblockEmployee}
+  const showRequest = async (req, res) =>{
+    try {
+        const requestList = await leave.find();
+        if (requestList.length === 0) {
+          return res.status(404).json({ message: "No requests found" });
+        }
+        return res
+          .status(200)
+          .json({ message: "requested retrieved successfully", requestList });
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        return res.status(500).json({ message: "Internal server error" });
+      }
+  }
+
+  const getSingleEmployeeDetail = async (req, res) =>{
+    try {
+        const {id} = req.params
+        const fullAttendence = await attendence.find({employeeId:id})
+        if(fullAttendence){
+            res.json({
+                success:true,
+                message:"Attendence retrieved successfully",
+                data:fullAttendence
+            })
+        } else {
+            res.json({
+                success:false,
+                message:"Attendence retrieved failed",
+            })
+        }
+    }
+    catch (err) {
+        res.status(400).json({
+            success:false,
+            message:'Attendence retrieved failed'
+        })
+    }
+  }
+
+
+module.exports = { addEmployee , showEmployee , blockAndUnblockEmployee, showRequest, getSingleEmployeeDetail}

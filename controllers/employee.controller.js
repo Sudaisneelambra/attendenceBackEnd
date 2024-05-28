@@ -72,7 +72,6 @@ const checkCheckin = async (req, res) =>{
     try {
         const {date,employeeId} =req.query
         const checkIn = await attendence.findOne({employeeId:employeeId,date:date})
-        console.log(checkIn);
         if(checkIn && !checkIn?.checkOut) {
             res.json({
                 success:true,
@@ -151,8 +150,6 @@ const takeBreak = async (req, res) =>{
         const checkInedEmployee = await attendence.findOne({employeeId:employeeId,date:date})
 
         if (checkInedEmployee) {
-            console.log(checkInedEmployee);
-            console.log(checkInedEmployee?.break?.length);
             if(checkInedEmployee?.break?.length=== 0 || checkInedEmployee?.break?.[checkInedEmployee?.break?.length-1]?.breakEnd){
                 const optionsTime = { timeZone: 'Asia/Kolkata' };
                 const currentDate = new Date().toLocaleString('en-US', optionsTime);
@@ -197,8 +194,6 @@ const breakCheck = async (req, res) =>{
     try {
         const {employeeId, date} = req.query
         const checkInedEmployee = await attendence.findOne({employeeId:employeeId,date:date})
-        console.log(req.query);
-        console.log(checkInedEmployee);
         if (checkInedEmployee) {
             const lastBreak = checkInedEmployee?.break?.[checkInedEmployee?.break.length-1]
             if(lastBreak && !lastBreak?.breakEnd){
@@ -306,5 +301,30 @@ const leaveRequest = async (req, res) =>{
     }
 }
 
-module.exports = {checkIn ,checkCheckin ,checkOut ,takeBreak,breakCheck, breakEnd ,leaveRequest}
+const getAttendance = async (req, res) =>{
+    try{
+        const {employeeId} = req.tokens
+        const data = await attendence.find({employeeId:employeeId})
+        if(data) {
+            res.json({
+                success:true,
+                message:'attendance data is found',
+                data:data
+            })
+        } else {
+            res.json({
+                success:false,
+                message:'attendance data is not found'
+                })
+        }
+    }
+    catch (err) {
+        res.status(400).json({
+            success:false,
+            message:'attendence getting failed'
+        })
+    }
+}
+
+module.exports = {checkIn ,checkCheckin ,checkOut ,takeBreak,breakCheck, breakEnd ,leaveRequest,getAttendance}
 

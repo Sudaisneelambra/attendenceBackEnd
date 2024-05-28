@@ -3,33 +3,51 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors')
-// const cron = require('node-cron');
+const cron = require('node-cron');
 
 const app = express();
 const port = process.env.PORT;
 const DB_URL = process.env.DB_URL;
+const employees =require('./models/login')
+const attendences = require('./models/attendance')
 
 const commonRoutes = require('./routes/common.routes')
 const adminRoutes = require('./routes/admin.routes')
-const employeeRoutes = require('./routes/employee.routes')
+const employeeRoutes = require('./routes/employee.routes');
+const { status } = require("express/lib/response");
 
 
 app.use(cors())
 app.use(express.json());
 
-// cron.schedule('03 1  * * 1-6', () => {
+cron.schedule('00 23  * * 1-6', async () => {
+    const optionsTime = { timeZone: 'Asia/Kolkata' };
+    const currentDate = new Date().toLocaleString('en-US', optionsTime);
+    const [currentDatePart, currentTimePart] = currentDate.split(', ')
+    const attendence = await attendences.find()
+    const employee = await employees.find()
 
-//     const time = new Date();
-//     const currentTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-//     const notification = {
-//       message: 'This is a reminder that check-in time is at 9:00 AM. Please be on time, Thank You 🙏',
-//       Time: currentTime
-//     };
-  
-//     array.forEach(user => {
-//       io.to(user.socketId).emit('notification', notification);
-//     });
-//   });
+    const todyas = attendence.filter((m)=>{
+        const [datePart, timePart] = m.checkIn.split(', ');
+        return datePart == currentDatePart
+    })
+
+    const excludedObjects = employee.filter((emp) => {
+        const isPresent = todyas.some((today) => {
+            return emp._id.equals(today.employeeId);
+        });
+        return !isPresent;
+    });
+
+    excludedObjects.forEach( async(element) => {
+        const newAttendence = new attendences({
+            employeeId:element._id,
+            date:currentDate,
+            status:'leave'
+        })
+        await newAttendence.save()
+    });
+  });
 
 mongoose
   .connect(DB_URL)
