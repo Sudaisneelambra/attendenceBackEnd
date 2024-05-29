@@ -10,6 +10,8 @@ const checkIn = async (req, res) =>{
         const currentDate = new Date().toLocaleString('en-US', optionsTime);
 
         const nodeDate = new Date(currentDate);
+        this.date = new Date();
+        const dateString = this.date.toDateString();
 
         const nineThirtyAM = new Date(nodeDate);
         nineThirtyAM.setHours(9, 30, 0, 0);
@@ -27,12 +29,13 @@ const checkIn = async (req, res) =>{
             {
                 $match: {
                   $and: [
-                    { date: date },
+                    { date: dateString },
                     { employeeId: new mongoose.Types.ObjectId(employeeId) }
                   ]
                 }
             }
         ])
+
         if(checkLogin && checkLogin?.length > 0) {
             if (checkLogin?.[0].checkOut){
                 res.status(400).json({

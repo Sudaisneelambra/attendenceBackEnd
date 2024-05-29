@@ -26,6 +26,8 @@ cron.schedule('00 23  * * 1-6', async () => {
     const [currentDatePart, currentTimePart] = currentDate.split(', ')
     const attendence = await attendences.find()
     const employee = await employees.find()
+    this.date = new Date();
+    const dateString = this.date.toDateString();
 
     const todyas = attendence.filter((m)=>{
         const [datePart, timePart] = m.checkIn.split(', ');
@@ -42,7 +44,7 @@ cron.schedule('00 23  * * 1-6', async () => {
     excludedObjects.forEach( async(element) => {
         const newAttendence = new attendences({
             employeeId:element._id,
-            date:currentDate,
+            date: dateString,
             status:'leave'
         })
         await newAttendence.save()
