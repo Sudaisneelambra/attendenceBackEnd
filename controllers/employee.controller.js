@@ -42,6 +42,11 @@ const checkIn = async (req, res) =>{
                     success:false,
                     message:'already check In and Check Outed'
                 })
+            } else if (!checkLogin?.[0].checkIn){
+                res.status(400).json({
+                    success:false,
+                    message:'He also marked as leave'
+                })
             }
         } else {
 
@@ -75,7 +80,8 @@ const checkCheckin = async (req, res) =>{
     try {
         const {date,employeeId} =req.query
         const checkIn = await attendence.findOne({employeeId:employeeId,date:date})
-        if(checkIn && !checkIn?.checkOut) {
+        console.log(checkIn);
+        if(checkIn && checkIn?.checkIn && !checkIn?.checkOut) {
             res.json({
                 success:true,
                 message:'already Checkined',
